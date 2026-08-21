@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coaching Foundation Result Portal</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 20px; }
+    .container { max-width: 700px; margin: auto; background: #fff; border: 1px solid #ddd; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .header { text-align: center; color: #4a154b; margin-bottom: 20px; }
+    .header h2 { margin: 0; font-size: 24px; }
+    .search-box { text-align: center; margin-bottom: 20px; }
+    input[type="text"] { padding: 8px; width: 200px; font-size: 16px; }
+    button { padding: 8px 16px; background-color: #7b1fa2; color: #fff; border: none; cursor: pointer; font-size: 16px; }
+    .badge-bar { background: #7b1fa2; color: #fff; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; margin-top: 15px; }
+    .info-row { padding: 10px 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th { background: #7b1fa2; color: #fff; text-align: left; padding: 8px; font-size: 14px; }
+    td { padding: 8px; border-bottom: 1px solid #eee; font-size: 14px; }
+    .total-row { font-weight: bold; border-top: 2px solid #ddd; }
+    .status { margin-top: 15px; font-weight: bold; font-size: 16px; }
+    .pass { color: #2e7d32; }
+    .fail { color: #c62828; }
+    .footer-bar { background: #7b1fa2; color: #fff; padding: 10px; text-align: center; font-weight: bold; margin-top: 25px; }
+    .disclaimer { font-size: 12px; color: #555; margin-top: 10px; line-height: 1.4; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h2>Foundation - Result, 2026</h2>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="rollInput" placeholder="Enter Roll Number">
+    <button onclick="fetchResult()">Check Result</button>
+  </div>
+
+  <div id="resultCard" class="hidden">
+    <div class="badge-bar">
+      <span>ROLL Number</span>
+      <span id="resRoll"></span>
+    </div>
+    <div class="info-row">
+      <strong>Name</strong>
+      <span id="resName"></span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>PAPER</th>
+          <th>SUBJECT</th>
+          <th style="text-align: right;">MARKS OBTAINED</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Paper 1</td><td>Accounting</td><td id="p1" style="text-align: right;"></td></tr>
+        <tr><td>Paper 2</td><td>Business Laws</td><td id="p2" style="text-align: right;"></td></tr>
+        <tr><td>Paper 3</td><td>Quantitative Aptitude</td><td id="p3" style="text-align: right;"></td></tr>
+        <tr><td>Paper 4</td><td>Business Economics</td><td id="p4" style="text-align: right;"></td></tr>
+        <tr class="total-row">
+          <td colspan="2">Total</td>
+          <td id="totalMarks" style="text-align: right;"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="status">
+      Result: <span id="resStatus"></span>
+    </div>
+
+    <div class="footer-bar">Hosted by Coaching Results Portal</div>
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> The results published on this portal are for immediate information to the examinees. These do not constitute a legal document.
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sample Data (Isko tum Google Sheet API ya Backend Database se replace kar sakte ho)
+  const students = {
+    "697946": { name: "AMAN PAREEK", p1: 94, p2: 39, p3: 92, p4: 95 },
+    "100101": { name: "RAHUL SHARMA", p1: 65, p2: 55, p3: 70, p4: 60 }
+  };
+
+  function fetchResult() {
+    const roll = document.getElementById("rollInput").value.trim();
+    const data = students[roll];
+
+    if (!data) {
+      alert("Roll Number not found!");
+      return;
+    }
+
+    const total = data.p1 + data.p2 + data.p3 + data.p4;
+    // Foundation criteria: min 40 in each subject & 50% aggregate (200 total)
+    const isPassed = (data.p1 >= 40 && data.p2 >= 40 && data.p3 >= 40 && data.p4 >= 40 && total >= 200);
+
+    document.getElementById("resRoll").innerText = roll;
+    document.getElementById("resName").innerText = data.name;
+    document.getElementById("p1").innerText = data.p1.toString().padStart(3, '0');
+    document.getElementById("p2").innerText = data.p2.toString().padStart(3, '0');
+    document.getElementById("p3").innerText = data.p3.toString().padStart(3, '0');
+    document.getElementById("p4").innerText = data.p4.toString().padStart(3, '0');
+    document.getElementById("totalMarks").innerText = total;
+
+    const statusEl = document.getElementById("resStatus");
+    statusEl.innerText = isPassed ? "PASSED" : "UNSUCCESSFUL";
+    statusEl.className = isPassed ? "pass" : "fail";
+
+    document.getElementById("resultCard").classList.remove("hidden");
+  }
+</script>
+</body>
+</html>
